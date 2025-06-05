@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Budget Manager</title>
+    <style>
+        * { font-family: 'Arial', sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: linear-gradient(135deg, #202e70 0%, #98b9cf 100%); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .settings-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .section-title { font-size: 18px; font-weight: bold; margin-top: 20px; }
+
+        .input-field, .btn-primary, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #111961 0%, #313566 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(100, 25, 94, 0.5);
+        }
+
+        .action-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-small { width: 48%; }
+    </style>
+</head>
+<body>
+
+    <div class="settings-container">
+        <h2>Settings</h2>
+
+        <div class="section-title">User Profile</div>
+        <input type="text" class="input-field" id="username" placeholder="Username">
+        <input type="email" class="input-field" id="email" placeholder="Email">
+        <input type="password" class="input-field" id="password" placeholder="Password">
+        <button class="btn-primary">Update Profile</button>
+
+        <div class="section-title">Budget Preferences</div>
+        <select id="budget-type">
+            <option>Dynamic Budget</option>
+            <option>Static Budget</option>
+        </select>
+        <button class="btn-primary">Save Preferences</button>
+
+        <div class="section-title">Data Management</div>
+        <div class="action-group">
+            <button class="btn-primary btn-small" onclick="clearData()">Clear Data</button>
+            <button class="btn-primary btn-small" onclick="exportReport()">Export Report</button>
+        </div>
+
+        <div class="section-title">Security</div>
+        <button class="btn-primary" onclick="logout()">Log Out</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script>
+        function clearData() {
+            localStorage.clear();
+            alert("Budget data cleared successfully.");
+        }
+
+        function exportReport() {
+            let data = [
+                ["Category", "Amount Spent"],
+                ["Food", 1500],
+                ["Travel", 2500],
+                ["Shopping", 1800],
+                ["Investments", 2200],
+                ["Groceries", 1300]
+            ];
+
+            let workbook = XLSX.utils.book_new();
+            let worksheet = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Spending Report");
+
+            XLSX.writeFile(workbook, "Budget_Report.xlsx");
+        }
+
+        function logout() {
+            alert("Logging out...");
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    </script>
+
+</body>
+</html>

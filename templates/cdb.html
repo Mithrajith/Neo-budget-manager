@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BUDGET BUDDY - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    * {
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #202e70 0%, #98b9cf 100%);
+    }
+    .glass-effect {
+      background: rgba(11, 13, 124, 0.616);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(9, 11, 114, 0.623);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2331b3 0%, #315166 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(26, 10, 170, 0.507);
+    }
+    /* Additional styling for interactive lists */
+    .list-item {
+      background: rgba(10, 12, 161, 0.473);
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen">
+  <!-- Sidebar -->
+  <div class="fixed left-0 top-0 h-full w-64 glass-effect z-50 slide-in-left">
+    <div class="p-6">
+      <!-- Brand -->
+      <div class="flex items-center mb-8">
+        <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center mr-3">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+            </path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-white font-bold text-lg">Budget Buddy</h1>
+        </div>
+      </div>
+      <!-- Navigation -->
+      <nav class="space-y-2">
+        <a href="#" class="sidebar-nav flex items-center p-3 rounded-lg text-white bg-white bg-opacity-20">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z">
+            </path>
+          </svg>
+          Dashboard
+        </a>
+        <a href="Analytics.html" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+            </path>
+          </svg>
+          Analytics
+        </a>
+        <a href="calendar.html" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+            </path>
+          </svg>
+          Calendar
+        </a>
+        <!-- Removed Reports link; keeping Settings -->
+        <a href="settings.html" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 
+                     3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 
+                     0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 
+                     1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 
+                     1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 
+                     2.37-2.37.996.608 2.296.07 2.572-1.065z">
+            </path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
+            </path>
+          </svg>
+          Settings
+        </a>
+      </nav>
+      <!-- User Profile -->
+      <div class="absolute bottom-6 left-6 right-6">
+        <div class="glass-effect rounded-lg p-3 flex items-center">
+          <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+            <span class="text-white font-semibold text-sm">JD</span>
+          </div>
+          <div class="flex-1">
+            <p class="text-white font-medium text-sm">John Doe</p>
+            <p class="text-white text-opacity-70 text-xs">Premium User</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="ml-64 min-h-screen">
+    <!-- Header -->
+    <header class="glass-effect p-6 slide-in-right">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+          <p class="text-white text-opacity-70">Welcome back! Here's your budget overview</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <!-- Quick Actions -->
+          <button onclick="openAddExpenseModal()" class="btn-primary px-4 py-2 rounded-lg text-white font-medium">
+            + Add Expense
+          </button>
+          <button onclick="openLLMModal()" class="glass-effect px-4 py-2 rounded-lg text-white font-medium hover:bg-white hover:bg-opacity-20 transition-all">
+            💬 LLM Chat
+          </button>
+        </div>
+      </div>
+    </header>
+    <!-- Dashboard Content -->
+    <div class="p-6 space-y-6">
+      <!-- Budget Overview Cards (Retained as-is) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 fade-in-up">
+        <div class="glass-effect rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white text-opacity-80 font-medium">Monthly Budget</h3>
+            <div class="w-8 h-8 bg-blue-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                </path>
+              </svg>
+            </div>
+          </div>
+          <p class="text-3xl font-bold text-white mb-2" id="monthlyBudget">₹50,000</p>
+          <p class="text-green-400 text-sm">+12% from last month</p>
+        </div>
+        <div class="glass-effect rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white text-opacity-80 font-medium">Total Spent</h3>
+            <div class="w-8 h-8 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6">
+                </path>
+              </svg>
+            </div>
+          </div>
+          <p class="text-3xl font-bold text-white mb-2" id="totalSpent">₹32,450</p>
+          <p class="text-red-400 text-sm">+8% from last month</p>
+        </div>
+        <div class="glass-effect rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white text-opacity-80 font-medium">Remaining</h3>
+            <div class="w-8 h-8 bg-green-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                </path>
+              </svg>
+            </div>
+          </div>
+          <p class="text-3xl font-bold text-white mb-2" id="remaining">₹17,550</p>
+          <p class="text-green-400 text-sm">35% of budget left</p>
+        </div>
+        <div class="glass-effect rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white text-opacity-80 font-medium">Savings</h3>
+            <div class="w-8 h-8 bg-yellow-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                </path>
+              </svg>
+            </div>
+          </div>
+          <p class="text-3xl font-bold text-white mb-2" id="savings">₹8,200</p>
+          <p class="text-yellow-400 text-sm pulse-animation">Goal: ₹15,000</p>
+        </div>
+      </div>
+      <!-- Category Labels & Spending Chart -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Expense Categories Grid (Retained) -->
+        <div class="lg:col-span-2 glass-effect rounded-xl p-6 fade-in-up">
+          <h3 class="text-xl font-bold text-white mb-6">Expense Categories</h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="categoryGrid">
+            <!-- Categories will be populated dynamically via JavaScript -->
+          </div>
+        </div>
+        <!-- Spending Chart remains -->
+        <div class="glass-effect rounded-xl p-6 fade-in-up">
+          <h3 class="text-xl font-bold text-white mb-4">Spending Overview</h3>
+          <div class="relative h-64">
+            <canvas id="spendingChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- Calendar & Recent Expenses -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Calendar -->
+        <div class="glass-effect rounded-xl p-6 fade-in-up">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Expense Calendar</h3>
+            <div class="flex items-center space-x-2">
+              <button onclick="previousMonth()" class="p-2 rounded-lg glass-effect text-white hover:bg-white hover:bg-opacity-20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M15 19l-7-7 7-7"></path>
+                </svg>
+              </button>
+              <span class="text-white font-medium" id="currentMonth">December 2024</span>
+              <button onclick="nextMonth()" class="p-2 rounded-lg glass-effect text-white hover:bg-white hover:bg-opacity-20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="calendar" class="grid grid-cols-7 gap-2">
+            <!-- Calendar populated via JavaScript -->
+          </div>
+        </div>
+        <!-- Recent Expenses -->
+        <div class="glass-effect rounded-xl p-6 fade-in-up">
+          <h3 class="text-xl font-bold text-white mb-6">Recent Expenses</h3>
+          <div class="space-y-4" id="recentExpenses">
+            <!-- Recent expenses populated via JavaScript -->
+          </div>
+        </div>
+      </div>
+      <!-- Quick Notes Section -->
+      <div class="glass-effect rounded-xl p-6 fade-in-up">
+        <h3 class="text-xl font-bold text-white mb-4">Quick Notes</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="notesContainer">
+          <!-- Interactive notes will be appended here -->
+        </div>
+        <button onclick="addNote()" class="mt-4 btn-primary px-4 py-2 rounded-lg text-white font-medium">
+          + Add Note
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Modals -->
+  <!-- Add Expense Modal -->
+  <div id="addExpenseModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+    <div class="modal-content glass-effect rounded-2xl p-8 w-full max-w-md mx-4">
+      <h3 class="text-2xl font-bold text-white mb-6">Add Expense</h3>
+      <form id="expenseForm" class="space-y-4" onsubmit="submitExpense(event)">
+        <div>
+          <label class="block text-white text-sm font-medium mb-2">Category</label>
+          <!-- Colorful Blue-themed Dropdown -->
+          <select id="expenseCategory" class="w-full px-4 py-3 bg-blue-500 bg-opacity-20 border border-blue-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300" onchange="expenseCategoryChanged()">
+            <!-- Dynamically populated categories -->
+          </select>
+          <div id="newCategoryDiv" class="mt-2 hidden">
+            <input type="text" id="newCategoryInput" class="w-full px-4 py-3 bg-blue-500 bg-opacity-20 border border-blue-400 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-300" placeholder="Enter new category" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-white text-sm font-medium mb-2">Amount (₹)</label>
+          <input type="number" id="expenseAmount" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Enter amount" required />
+        </div>
+        <div>
+          <label class="block text-white text-sm font-medium mb-2">Description</label>
+          <input type="text" id="expenseDescription" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Enter description" />
+        </div>
+        <div>
+          <label class="block text-white text-sm font-medium mb-2">Date</label>
+          <input type="date" id="expenseDate" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400" required />
+        </div>
+        <div class="flex space-x-4 pt-4">
+          <button type="submit" class="flex-1 btn-primary py-3 rounded-lg text-white font-medium">Add Expense</button>
+          <button type="button" onclick="closeModal('addExpenseModal')" class="flex-1 glass-effect py-3 rounded-lg text-white font-medium hover:bg-white hover:bg-opacity-20">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- LLM Chat Modal -->
+  <div id="llmModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
+    <div class="modal-content glass-effect rounded-2xl p-8 w-full max-w-2xl mx-4 h-96">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-2xl font-bold text-white">AI Budget Assistant</h3>
+        <button onclick="closeModal('llmModal')" class="text-white hover:text-red-400">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="flex flex-col h-full">
+        <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 space-y-3">
+          <div class="glass-effect rounded-lg p-3">
+            <p class="text-white text-sm">👋 Hi! I'm your AI budget assistant. Try typing: "food - 100, travel - 150, shopping - 200"</p>
+          </div>
+        </div>
+        <div class="flex space-x-2">
+          <input type="text" id="chatInput" placeholder="Type your expense or ask a question..." class="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+          <button onclick="sendMessage()" class="btn-primary px-6 py-3 rounded-lg text-white font-medium">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Predefined categories
+    const categories = [
+      { name: 'Food', icon: '🍕' },
+      { name: 'Online Shopping', icon: '🛒' },
+      { name: 'Travel', icon: '✈️' },
+      { name: 'Study', icon: '📚' },
+      { name: 'Offline Shopping', icon: '🏪' },
+      { name: 'Groceries', icon: '🛍️' },
+      { name: 'Investments', icon: '📈' },
+      { name: 'Savings', icon: '💰' }
+    ];
+    
+    // Populate the expense category dropdown on modal open
+    function populateExpenseCategories() {
+      const select = document.getElementById('expenseCategory');
+      select.innerHTML = '<option value="">Select Category</option>';
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.name;
+        option.textContent = `${cat.icon} ${cat.name}`;
+        select.appendChild(option);
+      });
+      // Add option for a new category
+      const newOption = document.createElement('option');
+      newOption.value = 'new';
+      newOption.textContent = '➕ Create New Category';
+      select.appendChild(newOption);
+    }
+    
+    // When the expense category changes, show/hide the new category input
+    function expenseCategoryChanged() {
+      const select = document.getElementById('expenseCategory');
+      const newCategoryDiv = document.getElementById('newCategoryDiv');
+      if (select.value === 'new') {
+        newCategoryDiv.classList.remove('hidden');
+      } else {
+        newCategoryDiv.classList.add('hidden');
+      }
+    }
+    
+    // Open Add Expense Modal
+    function openAddExpenseModal() {
+      populateExpenseCategories();
+      document.getElementById('addExpenseModal').classList.remove('hidden');
+    }
+    
+    // Close modal by ID
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+    
+    // Handle expense form submission
+    function submitExpense(event) {
+      event.preventDefault();
+      const categorySelect = document.getElementById('expenseCategory');
+      let category = categorySelect.value;
+      if (category === 'new') {
+        const newCat = document.getElementById('newCategoryInput').value;
+        if (!newCat) {
+          alert('Please enter a new category name.');
+          return;
+        }
+        category = newCat;
+        // Optionally, add the new category to the categories array
+        categories.push({ name: newCat, icon: '✨' });
+      }
+      const amount = document.getElementById('expenseAmount').value;
+      const description = document.getElementById('expenseDescription').value;
+      const date = document.getElementById('expenseDate').value;
+      
+      if (!category || !amount || !date) {
+        alert('Please fill out all required fields.');
+        return;
+      }
+      
+      console.log("Expense Added:", { category, amount, description, date });
+      alert("Expense added successfully!");
+      
+      // Reset and close the form
+      document.getElementById('expenseForm').reset();
+      document.getElementById('newCategoryDiv').classList.add('hidden');
+      closeModal('addExpenseModal');
+    }
+    
+    // Interactive Quick Notes – adds a note to the dashboard
+    function addNote() {
+      const noteText = prompt("Enter your budget note:");
+      if (!noteText) return;
+      const notesContainer = document.getElementById('notesContainer');
+      const noteDiv = document.createElement('div');
+      noteDiv.className = "glass-effect rounded-lg p-3";
+      noteDiv.innerHTML = `<p class="text-white">${noteText}</p>`;
+      notesContainer.appendChild(noteDiv);
+    }
+    
+    // Placeholder for LLM chat send message functionality
+    function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const message = chatInput.value;
+      if (!message) return;
+      const chatMessages = document.getElementById('chatMessages');
+      const userMsg = document.createElement('div');
+      userMsg.className = "glass-effect rounded-lg p-3";
+      userMsg.innerHTML = `<p class="text-white text-sm"><strong>You:</strong> ${message}</p>`;
+      chatMessages.appendChild(userMsg);
+      chatInput.value = "";
+    }
+  </script>
+</body>
+</html>

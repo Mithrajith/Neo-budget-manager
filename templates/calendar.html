@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Buddy Calendar</title>
+    <style>
+        * { font-family: Arial, sans-serif; box-sizing: border-box; }
+        body { text-align: center; margin: 0; padding: 20px; }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #202e70 0%, #98b9cf 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .calendar-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 350px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #111961 0%, #313566  100%); 
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(100, 25, 94, 0.5);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 5px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+
+    <h1>Budget Buddy Calendar</h1>
+    <div class="calendar-container">
+        <input type="date" id="event-date">
+        <input type="text" id="event-description" placeholder="Enter event/reminder">
+        <button class="btn-primary" onclick="addEvent()">Add Event</button>
+    </div>
+
+    <h2>Upcoming Events:</h2>
+    <ul id="event-list"></ul>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => loadEvents());
+
+        function addEvent() {
+            let date = document.getElementById("event-date").value;
+            let description = document.getElementById("event-description").value;
+
+            if (!date || !description) {
+                alert("Please select a date and enter an event!");
+                return;
+            }
+
+            let events = JSON.parse(localStorage.getItem("budgetEvents")) || [];
+            events.push({ date, description });
+
+            localStorage.setItem("budgetEvents", JSON.stringify(events));
+            loadEvents();
+        }
+
+        function loadEvents() {
+            let events = JSON.parse(localStorage.getItem("budgetEvents")) || [];
+            let eventList = document.getElementById("event-list");
+            eventList.innerHTML = "";
+
+            events.forEach(event => {
+                let li = document.createElement("li");
+                li.textContent = `${event.date}: ${event.description}`;
+                eventList.appendChild(li);
+            });
+        }
+    </script>
+
+</body>
+</html>

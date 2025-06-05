@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Analytics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <style>
+        * { font-family: Arial, sans-serif; box-sizing: border-box; }
+        body { text-align: center; margin: 0; padding: 20px; }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #202e70 0%, #98b9cf 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .analytics-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #111961 0%, #313566 100%);
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            width: 100%;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(100, 25, 94, 0.5);
+        }
+
+        canvas {
+            width: 90%;
+            height: 300px;
+            background: rgb(16, 93, 145);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+
+    <h1>Budget Analytics Dashboard</h1>
+    <div class="analytics-container">
+        <h2>Spending Overview</h2>
+        <canvas id="spendingChart"></canvas>
+        <button class="btn-primary" onclick="downloadExcel()">Download Excel Report</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderChart();
+        });
+
+        function renderChart() {
+            const ctx = document.getElementById("spendingChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Food", "Travel", "Shopping", "Investments", "Groceries"],
+                    datasets: [{
+                        data: [1500, 2500, 1800, 2200, 1300],
+                        backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#4caf50", "#9c27b0"]
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: { labels: { color: "white" } }
+                    },
+                    scales: {
+                        x: { ticks: { color: "white" } },
+                        y: { ticks: { color: "white" } }
+                    }
+                }
+            });
+        }
+
+        function downloadExcel() {
+            let data = [
+                ["Category", "Amount Spent"],
+                ["Food", 1500],
+                ["Travel", 2500],
+                ["Shopping", 1800],
+                ["Investments", 2200],
+                ["Groceries", 1300]
+            ];
+
+            let workbook = XLSX.utils.book_new();
+            let worksheet = XLSX.utils.aoa_to_sheet(data);
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Spending Report");
+
+            XLSX.writeFile(workbook, "Budget_Report.xlsx");
+        }
+    </script>
+
+</body>
+</html>

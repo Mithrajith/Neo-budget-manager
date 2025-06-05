@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUDGET BUDDY- Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #202e70 0%, #98b9cf 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .category-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-card.active {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.5);
+            transform: translateY(-3px);
+        }
+        
+        .slide-in-left {
+            animation: slideInLeft 0.6s ease-out;
+        }
+        
+        .slide-in-right {
+            animation: slideInRight 0.6s ease-out;
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .calendar-day {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(34, 197, 94, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .calendar-day.has-expense {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        
+        .calendar-day.selected {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.8);
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from { transform: scale(0.9) translateY(-20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .expense-item {
+            transition: all 0.3s ease;
+        }
+        
+        .expense-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #111961 0%, #313566 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); 
+        }
+        
+        .sidebar-nav {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-nav:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .category-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover .category-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Sidebar -->
+    <div class="fixed left-0 top-0 h-full w-64 glass-effect z-50 slide-in-left">
+        <div class="p-6">
+            <!-- Brand -->
+            <div class="flex items-center mb-8">
+                <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center mr-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-lg">EO Budget</h1>
+                    <p class="text-white text-opacity-70 text-sm">Manager</p>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <a href="#" class="sidebar-nav flex items-center p-3 rounded-lg text-white bg-white bg-opacity-20">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="#" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Analytics
+                </a>
+                <a href="#" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Calendar
+                </a>
+                <a href="#" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Reports
+                </a>
+                <a href="#" class="sidebar-nav flex items-center p-3 rounded-lg text-white text-opacity-70 hover:text-white">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Settings
+                </a>
+            </nav>
+            
+            <!-- User Profile -->
+            <div class="absolute bottom-6 left-6 right-6">
+                <div class="glass-effect rounded-lg p-3 flex items-center">
+                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white font-semibold text-sm">JD</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-medium text-sm">John Doe</p>
+                        <p class="text-white text-opacity-70 text-xs">Premium User</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="ml-64 min-h-screen">
+        <!-- Header -->
+        <header class="glass-effect p-6 slide-in-right">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+                    <p class="text-white text-opacity-70">Welcome back! Here's your budget overview</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Quick Actions -->
+                    <button onclick="openAddExpenseModal()" class="btn-primary px-4 py-2 rounded-lg text-white font-medium">
+                        + Add Expense
+                    </button>
+                    <button onclick="openLLMModal()" class="glass-effect px-4 py-2 rounded-lg text-white font-medium hover:bg-white hover:bg-opacity-20 transition-all">
+                        💬 LLM Chat
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Dashboard Content -->
+        <div class="p-6 space-y-6">
+            <!-- Budget Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 fade-in-up">
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white text-opacity-80 font-medium">Monthly Budget</h3>
+                        <div class="w-8 h-8 bg-blue-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-2" id="monthlyBudget">₹50,000</p>
+                    <p class="text-green-400 text-sm">+12% from last month</p>
+                </div>
+                
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white text-opacity-80 font-medium">Total Spent</h3>
+                        <div class="w-8 h-8 bg-red-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-2" id="totalSpent">₹32,450</p>
+                    <p class="text-red-400 text-sm">+8% from last month</p>
+                </div>
+                
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white text-opacity-80 font-medium">Remaining</h3>
+                        <div class="w-8 h-8 bg-green-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-2" id="remaining">₹17,550</p>
+                    <p class="text-green-400 text-sm">35% of budget left</p>
+                </div>
+                
+                <div class="glass-effect rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white text-opacity-80 font-medium">Savings</h3>
+                        <div class="w-8 h-8 bg-yellow-500 bg-opacity-20 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-3xl font-bold text-white mb-2" id="savings">₹8,200</p>
+                    <p class="text-yellow-400 text-sm pulse-animation">Goal: ₹15,000</p>
+                </div>
+            </div>
+            
+            <!-- Category Labels & Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Category Cards -->
+                <div class="lg:col-span-2 glass-effect rounded-xl p-6 fade-in-up">
+                    <h3 class="text-xl font-bold text-white mb-6">Expense Categories</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="categoryGrid">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Spending Chart -->
+                <div class="glass-effect rounded-xl p-6 fade-in-up">
+                    <h3 class="text-xl font-bold text-white mb-4">Spending Overview</h3>
+                    <div class="relative h-64">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Calendar & Recent Expenses -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Calendar -->
+                <div class="glass-effect rounded-xl p-6 fade-in-up">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-white">Expense Calendar</h3>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previousMonth()" class="p-2 rounded-lg glass-effect text-white hover:bg-white hover:bg-opacity-20">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <span class="text-white font-medium" id="currentMonth">December 2024</span>
+                            <button onclick="nextMonth()" class="p-2 rounded-lg glass-effect text-white hover:bg-white hover:bg-opacity-20">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="calendar" class="grid grid-cols-7 gap-2">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Recent Expenses -->
+                <div class="glass-effect rounded-xl p-6 fade-in-up">
+                    <h3 class="text-xl font-bold text-white mb-6">Recent Expenses</h3>
+                    <div class="space-y-4" id="recentExpenses">
+                        <!-- Recent expenses will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notes Section -->
+            <div class="glass-effect rounded-xl p-6 fade-in-up">
+                <h3 class="text-xl font-bold text-white mb-4">Quick Notes</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="notesContainer">
+                    <!-- Notes will be populated by JavaScript -->
+                </div>
+                <button onclick="addNote()" class="mt-4 btn-primary px-4 py-2 rounded-lg text-white font-medium">
+                    + Add Note
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <!-- Add Expense Modal -->
+    <div id="addExpenseModal" class="fixed inset-0 modal-overlay hidden items-center justify-center z-50">
+        <div class="modal-content glass-effect rounded-2xl p-8 w-full max-w-md mx-4">
+            <h3 class="text-2xl font-bold text-white mb-6">Add Expense</h3>
+            <form id="expenseForm" class="space-y-4">
+                <div>
+                    <label class="block text-white text-sm font-medium mb-2">Category</label>
+                    <select id="expenseCategory" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-white text-sm font-medium mb-2">Amount (₹)</label>
+                    <input type="number" id="expenseAmount" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Enter amount">
+                </div>
+                <div>
+                    <label class="block text-white text-sm font-medium mb-2">Description</label>
+                    <input type="text" id="expenseDescription" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Enter description">
+                </div>
+                <div>
+                    <label class="block text-white text-sm font-medium mb-2">Date</label>
+                    <input type="date" id="expenseDate" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="submit" class="flex-1 btn-primary py-3 rounded-lg text-white font-medium">Add Expense</button>
+                    <button type="button" onclick="closeModal('addExpenseModal')" class="flex-1 glass-effect py-3 rounded-lg text-white font-medium hover:bg-white hover:bg-opacity-20">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- LLM Chat Modal -->
+    <div id="llmModal" class="fixed inset-0 modal-overlay hidden items-center justify-center z-50">
+        <div class="modal-content glass-effect rounded-2xl p-8 w-full max-w-2xl mx-4 h-96">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-white">AI Budget Assistant</h3>
+                <button onclick="closeModal('llmModal')" class="text-white hover:text-red-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex flex-col h-full">
+                <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 space-y-3">
+                    <div class="glass-effect rounded-lg p-3">
+                        <p class="text-white text-sm">👋 Hi! I'm your AI budget assistant. Try typing: "food - 100, travel - 150, shopping - 200"</p>
+                    </div>
+                </div>
+                <div class="flex space-x-2">
+                    <input type="text" id="chatInput" placeholder="Type your expense or ask a question..." class="flex-1 px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    <button onclick="sendMessage()" class="btn-primary px-6 py-3 rounded-lg text-white font-medium">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Categories data with icons and colors
+        const categories = [
+            { name: 'Food', icon: '🍕', color: 'bg-red-500', spent: 5420, budget: 8000 },
+            { name: 'Online Shopping', icon: '🛒', color: 'bg-blue-500', spent: 3200, budget: 5000 },
+            { name: 'Travel', icon: '✈️', color: 'bg-green-500', spent: 1800, budget: 3000 },
+            { name: 'Study', icon: '📚', color: 'bg-purple-500', spent: 2100, budget: 4000 },
+            { name: 'Offline Shopping', icon: '🏪', color: 'bg-yellow-500', spent: 1950, budget: 3500 },
+            { name: 'Groceries', icon: '🛍️', color: 'bg-pink-500', spent: 4200, budget: 6000 },
+            { name: 'Investments', icon: '📈', color: 'bg-indigo-500', spent: 5000, budget: 10000 },
+            { name: 'Savings', icon: '💰', color: 'bg-teal-500', spent: 8200, budget: 15000 }
+        ];
+
+        // Expenses data
+        let expenses = [
+            { id: 1, category: 'Food', amount: 250, description: 'Lunch at restaurant', date: '2024-12-05' },
+            { id: 2, category: 'Groceries', amount: 800, description: 'Weekly groceries', date: '2024-12-04' },
+            { id: 3, category: 'Travel', amount: 120, description: 'Bus fare', date: '2024-12-03' },
+            { id: 4, category: 'Online Shopping', amount: 1200, description: 'Electronics', date: '2024-12-02' },
+            { id: 5, category: 'Study', amount: 500, description: 'Course books', date: '2024-12-01' }
+        ];
+
+        // Notes data
+        let notes = [
+            { id: 1, title: 'Budget Goal', content: 'Save ₹15,000 this month for vacation', color: 'bg-blue-500' },
+            { id: 2, title: 'Reminder', content: 'Pay electricity bill by 10th', color: 'bg-red-500' },
+            { id: 3, title: 'Shopping List', content: 'Buy gifts for family', color: 'bg-green-500' }
+        ];
