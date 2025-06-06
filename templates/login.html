@@ -176,7 +176,7 @@
         </div>
         
         <!-- Login Form -->
-        <form id="loginForm" class="space-y-6">
+        <form id="loginForm" method="POST" action="/login" class="space-y-6">
             <div class="space-y-4">
                 <!-- Email Input -->
                 <div class="relative">
@@ -200,28 +200,30 @@
                 <div class="relative">
                     <label class="block text-white text-sm font-medium mb-2" for="password">Password</label>
                     <div class="relative">
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password"
-                            class="input-focus w-full px-4 py-3 pl-12 pr-12 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-30 focus:border-transparent"
-                            placeholder="Enter your password"
-                            required
-                        >
-                        <svg class="absolute left-4 top-3.5 w-5 h-5 text-white text-opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password"
+                        class="input-focus w-full px-4 py-3 pl-12 pr-12 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-30 focus:border-transparent"
+                        placeholder="Enter your password"
+                        required
+                    >
+                    <div></div>
+                    <!-- Password Icon -->
+                    <svg class="absolute left-4 top-3.5 w-5 h-5 text-white text-opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <!-- Show/Hide Password Toggle -->
+                    <button type="button" id="togglePassword" class="absolute right-4 top-3.5 text-white text-opacity-60 hover:text-white transition-colors">
+                        <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path id="eyeIconPath" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm-6.934-5.292A9.97 9.97 0 0112 4c4.418 0 8.193 2.865 9.542 6.839a1 1 0 010 .322C20.193 15.135 16.418 18 12 18a9.97 9.97 0 01-3.934-.708m-.707-1.415a10.026 10.026 0 01-1.847-2.126m0 0A9.965 9.965 0 014.458 11m0 0a9.965 9.965 0 01.588-1.292m1.454-2.229a9.96 9.96 0 012.6-2.125" />
                         </svg>
-                        <button type="button" id="togglePassword" class="absolute right-4 top-3.5 text-white text-opacity-60 hover:text-white transition-colors">
-                            <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                        </button>
-                    </div>
+                    </button>
                 </div>
             </div>
-            
-            <!-- Remember & Forgot -->
+                    
+                    <!-- Remember & Forgot -->
             <div class="flex items-center justify-between">
                 <label class="flex items-center">
                     <input type="checkbox" class="w-4 h-4 text-blue-600 bg-transparent border-white border-opacity-30 rounded focus:ring-blue-500 focus:ring-2">
@@ -235,7 +237,7 @@
                 type="submit" 
                 id="submitBtn"
                 class="btn-hover w-full bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-30"
-            >
+            action="/login">
                 <span id="btnText">Sign In</span>
                 <div id="loadingSpinner" class="hidden inline-block w-4 h-4 border-2 border-white border-opacity-30 border-t-white rounded-full animate-spin ml-2"></div>
             </button>
@@ -289,105 +291,92 @@
         </div>
     </div>
 
-    <script>
-        // Toggle password visibility
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
-                `;
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.innerHTML = `
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                `;
-            }
-        });
+<script>
+    // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
 
-        // Form submission handling
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('btnText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const successMessage = document.getElementById('successMessage');
-            const form = document.getElementById('loginForm');
-            
-            // Basic validation
-            if (!email || !password) {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+            `;
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            `;
+        }
+    });
+
+    // Form submission handling
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const successMessage = document.getElementById('successMessage');
+        const form = document.getElementById('loginForm');
+        const errorBox = document.getElementById('errorBox');
+
+        if (!email || !password) {
+            form.classList.add('shake');
+            setTimeout(() => form.classList.remove('shake'), 500);
+            return;
+        }
+
+        // UI loading state
+        btnText.textContent = 'Signing In...';
+        loadingSpinner.classList.remove('hidden');
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ email, password })
+            });
+
+            if (response.redirected) {
+                // Successful login: Flask redirects, so follow it
+                window.location.href = response.url;
+            } else {
+                // Failed login (Flask stayed on same page)
+                const text = await response.text();
+                loadingSpinner.classList.add('hidden');
+                submitBtn.disabled = false;
+                btnText.textContent = 'Login';
+
+                // Optional: check if error message exists in HTML returned
+                if (text.includes("Invalid email or password")) {
+                    errorBox.textContent = "❌ Invalid email or password";
+                    errorBox.classList.remove('hidden');
+                } else {
+                    errorBox.textContent = "⚠️ Login failed. Try again.";
+                    errorBox.classList.remove('hidden');
+                }
+
                 form.classList.add('shake');
                 setTimeout(() => form.classList.remove('shake'), 500);
-                return;
             }
-            
-            // Show loading state
-            btnText.textContent = 'Signing In...';
-            loadingSpinner.classList.remove('hidden');
-            submitBtn.disabled = true;
-            
-            // Simulate API call
-            setTimeout(() => {
-                // Hide loading state
-                loadingSpinner.classList.add('hidden');
-                
-                // Show success animation
-                form.style.display = 'none';
-                successMessage.classList.remove('hidden');
-                successMessage.querySelector('.success-checkmark').style.display = 'block';
-                
-                // Simulate redirect after 2 seconds
-                setTimeout(() => {
-                    alert('Login successful! In a real application, you would be redirected to the dashboard.');
-                    
-                    // Reset form for demo purposes
-                    form.style.display = 'block';
-                    successMessage.classList.add('hidden');
-                    successMessage.querySelector('.success-checkmark').style.display = 'none';
-                    btnText.textContent = 'Sign In';
-                    submitBtn.disabled = false;
-                    form.reset();
-                }, 2000);
-                
-            }, 2000);
-        });
 
-        // Add input focus effects
-        const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                this.parentElement.style.transform = 'translateY(-2px)';
-            });
-            
-            input.addEventListener('blur', function() {
-                this.parentElement.style.transform = 'translateY(0)';
-            });
-        });
+        } catch (err) {
+            console.error(err);
+            errorBox.textContent = "🚫 Network error or server issue.";
+            errorBox.classList.remove('hidden');
 
-        // Add smooth scroll and fade-in effects on load
-        window.addEventListener('load', function() {
-            const slideUpElements = document.querySelectorAll('.slide-up');
-            const fadeInElements = document.querySelectorAll('.fade-in');
-            
-            slideUpElements.forEach((element, index) => {
-                setTimeout(() => {
-                    element.style.animationDelay = `${index * 0.1}s`;
-                }, 100);
-            });
-            
-            fadeInElements.forEach((element, index) => {
-                setTimeout(() => {
-                    element.style.animationDelay = `${index * 0.2}s`;
-                }, 200);
-            });
-        });
-    </script>
+            loadingSpinner.classList.add('hidden');
+            submitBtn.disabled = false;
+            btnText.textContent = 'Login';
+        }
+    });
+</script>
 </body>
 </html>
